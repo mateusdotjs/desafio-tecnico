@@ -10,3 +10,5 @@ export const shifts = pgTable('shifts', {
   startTime: time('start_time').notNull(),
   endTime: time('end_time').notNull(),
 });
+
+export type Shift = typeof shifts.$inferSelect;
