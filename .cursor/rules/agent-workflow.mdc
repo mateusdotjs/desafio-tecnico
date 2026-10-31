@@ -1,0 +1,56 @@
+---
+description: Mandatory rules for agent execution, dependency management, and Git operations.
+alwaysApply: true
+---
+
+# Agent Workflow Rules
+
+## Dependencies
+
+- NEVER install, uninstall, or update dependencies.
+- If a dependency is missing or a new dependency is required, mention it in the implementation plan and wait for explicit user authorization.
+- Do not modify dependency versions or package manifests to introduce dependencies without authorization.
+
+## Command Execution
+
+The agent must not perform the following actions without explicit user authorization:
+
+- Start, restart, or stop the application or any development server.
+- Execute commands that may occupy application ports or conflict with running processes.
+- Execute `git add`.
+- Execute `git commit`.
+- Install, uninstall, or update dependencies.
+
+The agent may suggest these actions but must wait for explicit user authorization before executing them.
+
+## Git and Atomic Changes
+
+- Keep implementations as atomic and cohesive as reasonably possible.
+- Avoid mixing unrelated features, refactoring, formatting changes, or fixes in the same implementation.
+- Preserve a clean and understandable Git history.
+- Never create commits automatically.
+
+## Conventional Commits
+
+At the end of every completed implementation, suggest an appropriate Conventional Commit message.
+
+Use the following format:
+
+`<type>(<scope>): <description>`
+
+Examples:
+
+- `feat(appointments): add exam appointment booking`
+- `fix(availability): prevent overlapping time slots`
+- `test(appointments): add appointment service tests`
+- `refactor(doctors): simplify availability queries`
+
+Commit suggestions are informational only. Never execute `git commit` without explicit user authorization.
+
+## Tests
+
+- Tests related to an implementation should normally be included in the same cohesive change.
+- Do not create separate commits exclusively for tests when they belong to a feature or bug fix.
+- Keep test-only changes separate when they represent an independent task, such as adding test infrastructure or improving existing test coverage.---
+alwaysApply: true
+---

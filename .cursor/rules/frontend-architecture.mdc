@@ -1,0 +1,31 @@
+---
+description: Frontend structure and architecture guidelines.
+alwaysApply: false
+---
+
+# Frontend Architecture
+
+## Technology Stack
+- React
+- TypeScript
+
+## Structure
+
+The frontend must be organized by responsibility, keeping pages, components, API communication, and hooks separated.
+
+- **Pages:** Responsible for composing the interface of each application route.
+- **Components:** Reusable user interface elements.
+- **API:** Handles communication with the backend, including HTTP requests and response handling.
+- **Hooks:** Encapsulate reusable logic and React-related functionality.
+
+## Guidelines
+
+- Avoid concentrating all page logic in a single component.
+- Components must have clear responsibilities.
+- Avoid making HTTP requests directly inside components when the logic can be encapsulated in the API layer or hooks.
+- Avoid duplicating logic across pages and components.
+- Maintain consistent TypeScript typing.
+
+This rule defines only the general structure. More specific architectural decisions will be documented in separate rules as the project evolves.
+alwaysApply: true
+---

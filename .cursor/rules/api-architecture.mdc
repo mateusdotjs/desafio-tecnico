@@ -1,0 +1,29 @@
+---
+alwaysApply: false
+---
+# API Architecture
+
+## Technology Stack
+- Node.js
+- TypeScript
+- NestJS
+- Drizzle ORM
+
+## Structure
+
+The API must follow a layered architecture, with clear separation of responsibilities.
+
+- **Modules:** Organize the code by domain or feature, following NestJS module conventions.
+- **Controllers:** Handle HTTP requests, validate input through DTOs, and return responses.
+- **Services:** Handle business logic and use case orchestration.
+
+## Guidelines
+
+- Each feature must be organized within its respective module.
+- Keep responsibilities clearly separated between controllers, services, and repositories.
+- Controllers must not contain business logic or perform direct database queries.
+- Services must not depend on HTTP-specific details.
+- Do not introduce additional abstractions or layers without a concrete need.
+- Use TypeScript consistently and take advantage of Drizzle's type inference.
+
+This rule defines only the general structure. More specific architectural decisions will be documented in separate rules as the project evolves.
