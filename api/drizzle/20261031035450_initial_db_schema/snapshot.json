@@ -1,0 +1,494 @@
+{
+  "type": "base",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "8ff39298-3e11-4567-8aa4-d11e2e59f42b",
+  "prevIds": [
+    "00000000-0000-0000-0000-000000000000"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "appointments"
+      ],
+      "writes": [
+        "s|tbl|public.appointments",
+        "n|tbl|public.appointments",
+        "e|tbl|public.appointments",
+        "n|rel|public.appointments",
+        "n|type|public.appointments",
+        "n|rel|public.appointments_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "doctors"
+      ],
+      "writes": [
+        "s|tbl|public.doctors",
+        "n|tbl|public.doctors",
+        "e|tbl|public.doctors",
+        "n|rel|public.doctors",
+        "n|type|public.doctors",
+        "n|rel|public.doctors_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "exams"
+      ],
+      "writes": [
+        "s|tbl|public.exams",
+        "n|tbl|public.exams",
+        "e|tbl|public.exams",
+        "n|rel|public.exams",
+        "n|type|public.exams",
+        "n|rel|public.exams_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "shifts"
+      ],
+      "writes": [
+        "s|tbl|public.shifts",
+        "n|tbl|public.shifts",
+        "e|tbl|public.shifts",
+        "n|rel|public.shifts",
+        "n|type|public.shifts",
+        "n|rel|public.shifts_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "appointments"
+      ],
+      "writes": [
+        "s|fk|public.appointments.appointments_doctor_id_doctors_id_fkey",
+        "n|fk|public.appointments.appointments_doctor_id_doctors_id_fkey",
+        "e|fk|public.appointments.appointments_doctor_id_doctors_id_fkey",
+        "n|con|public.appointments.appointments_doctor_id_doctors_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.appointments",
+        "n|sch|public",
+        "n|tbl|public.doctors",
+        "n|sch|public",
+        "n|col|public.appointments.doctor_id",
+        "n|col|public.doctors.id",
+        "e|uniqueness|public.doctors.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "appointments"
+      ],
+      "writes": [
+        "s|fk|public.appointments.appointments_exam_id_exams_id_fkey",
+        "n|fk|public.appointments.appointments_exam_id_exams_id_fkey",
+        "e|fk|public.appointments.appointments_exam_id_exams_id_fkey",
+        "n|con|public.appointments.appointments_exam_id_exams_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.appointments",
+        "n|sch|public",
+        "n|tbl|public.exams",
+        "n|sch|public",
+        "n|col|public.appointments.exam_id",
+        "n|col|public.exams.id",
+        "e|uniqueness|public.exams.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "shifts"
+      ],
+      "writes": [
+        "s|fk|public.shifts.shifts_doctor_id_doctors_id_fkey",
+        "n|fk|public.shifts.shifts_doctor_id_doctors_id_fkey",
+        "e|fk|public.shifts.shifts_doctor_id_doctors_id_fkey",
+        "n|con|public.shifts.shifts_doctor_id_doctors_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.shifts",
+        "n|sch|public",
+        "n|tbl|public.doctors",
+        "n|sch|public",
+        "n|col|public.shifts.doctor_id",
+        "n|col|public.doctors.id",
+        "e|uniqueness|public.doctors.id"
+      ]
+    }
+  ],
+  "ddl": [
+    {
+      "schema": "public",
+      "name": "appointments",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "doctors",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "exams",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "shifts",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "table": "appointments",
+      "name": "id",
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "gen_random_uuid()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appointments",
+      "name": "patient_name",
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appointments",
+      "name": "doctor_id",
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appointments",
+      "name": "exam_id",
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appointments",
+      "name": "start_at",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appointments",
+      "name": "end_at",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appointments",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "doctors",
+      "name": "id",
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "gen_random_uuid()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "doctors",
+      "name": "name",
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "exams",
+      "name": "id",
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "exams",
+      "name": "name",
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "exams",
+      "name": "duration_minutes",
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "shifts",
+      "name": "id",
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "gen_random_uuid()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "shifts",
+      "name": "doctor_id",
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "shifts",
+      "name": "day_of_week",
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "shifts",
+      "name": "start_time",
+      "type": "time",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "shifts",
+      "name": "end_time",
+      "type": "time",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appointments",
+      "name": "appointments_doctor_id_doctors_id_fkey",
+      "nameExplicit": false,
+      "columns": [
+        "doctor_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "doctors",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "entityType": "fks"
+    },
+    {
+      "schema": "public",
+      "table": "appointments",
+      "name": "appointments_exam_id_exams_id_fkey",
+      "nameExplicit": false,
+      "columns": [
+        "exam_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "exams",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "entityType": "fks"
+    },
+    {
+      "schema": "public",
+      "table": "shifts",
+      "name": "shifts_doctor_id_doctors_id_fkey",
+      "nameExplicit": false,
+      "columns": [
+        "doctor_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "doctors",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "entityType": "fks"
+    },
+    {
+      "schema": "public",
+      "table": "appointments",
+      "name": "appointments_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "doctors",
+      "name": "doctors_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "exams",
+      "name": "exams_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "shifts",
+      "name": "shifts_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    }
+  ]
+}
