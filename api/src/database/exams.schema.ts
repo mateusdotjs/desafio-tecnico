@@ -5,3 +5,5 @@ export const exams = pgTable('exams', {
   name: varchar('name', { length: 255 }).notNull(),
   durationMinutes: integer('duration_minutes').notNull(),
 });
+
+export type Exam = typeof exams.$inferSelect;
