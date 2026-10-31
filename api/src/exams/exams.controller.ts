@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { SearchExamsQueryDto } from './dto/search-exams-query.dto';
-import { Exam } from '../database/exams.schema';
+import { Exam } from '../database/schema/exams.schema';
 import { ExamsService } from './exams.service';
 
 @Controller('exams')

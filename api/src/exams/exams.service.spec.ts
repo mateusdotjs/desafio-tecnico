@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Exam } from '../database/exams.schema';
+import { Exam } from '../database/schema/exams.schema';
 import { ExamsRepository } from './exams.repository';
 import { ExamsService } from './exams.service';
 

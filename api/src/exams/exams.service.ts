@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Exam } from '../database/exams.schema';
+import { Exam } from '../database/schema/exams.schema';
 import { ExamsRepository } from './exams.repository';
 
 @Injectable()

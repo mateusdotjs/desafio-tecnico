@@ -2,8 +2,8 @@ import { InjectDrizzle } from '@nestjs/drizzle';
 import { Injectable } from '@nestjs/common';
 import { asc, eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { doctors } from '../database/doctors.schema';
-import { shifts } from '../database/shifts.schema';
+import { doctors } from '../database/schema/doctors.schema';
+import { shifts } from '../database/schema/shifts.schema';
 import { DoctorShiftRow, DoctorWithShifts } from './doctor.types';
 
 @Injectable()

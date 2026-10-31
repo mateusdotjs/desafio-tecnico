@@ -1,5 +1,5 @@
-import { Doctor } from '../database/doctors.schema';
-import { Shift } from '../database/shifts.schema';
+import { Doctor } from '../database/schema/doctors.schema';
+import { Shift } from '../database/schema/shifts.schema';
 
 export type DoctorShiftEntry = Omit<Shift, 'doctorId'>;
 
