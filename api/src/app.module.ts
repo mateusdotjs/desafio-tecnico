@@ -5,6 +5,7 @@ import { DrizzleModule } from '@nestjs/drizzle';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { ExamsModule } from './exams/exams.module';
 import { DoctorsModule } from './doctors/doctors.module';
+import { AppointmentsModule } from './appointments/appointments.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { DoctorsModule } from './doctors/doctors.module';
     }),
     ExamsModule,
     DoctorsModule,
+    AppointmentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

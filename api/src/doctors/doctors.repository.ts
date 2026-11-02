@@ -23,6 +23,21 @@ export class DoctorsRepository {
     return this.groupRows(rows);
   }
 
+  async findByIdWithShifts(id: string): Promise<DoctorWithShifts | undefined> {
+    const rows = await this.db
+      .select({
+        doctor: doctors,
+        shift: shifts,
+      })
+      .from(doctors)
+      .leftJoin(shifts, eq(shifts.doctorId, doctors.id))
+      .where(eq(doctors.id, id))
+      .orderBy(asc(shifts.dayOfWeek), asc(shifts.startTime));
+
+    const grouped = this.groupRows(rows);
+    return grouped[0];
+  }
+
   private groupRows(rows: DoctorShiftRow[]): DoctorWithShifts[] {
     const byDoctorId = new Map<string, DoctorWithShifts>();
 

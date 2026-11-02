@@ -23,3 +23,5 @@ export const appointments = pgTable('appointments', {
     .defaultNow()
     .notNull(),
 });
+
+export type Appointment = typeof appointments.$inferSelect;
