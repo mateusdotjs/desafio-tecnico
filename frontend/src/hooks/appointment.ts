@@ -20,7 +20,7 @@ export function useCreateAppointment() {
 
   return useMutation({
     mutationFn: createAppointment,
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["appointments", "availability"],
       });
