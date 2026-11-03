@@ -3,7 +3,7 @@ import { IsOptional, IsString } from 'class-validator';
 
 export class SearchExamsQueryDto {
   @IsOptional()
-  @IsString()
+  @IsString({ message: 'O nome do exame deve ser um texto' })
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim() : value,
   )

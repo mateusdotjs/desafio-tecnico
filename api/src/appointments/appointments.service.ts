@@ -1,9 +1,11 @@
+import { Injectable } from '@nestjs/common';
 import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+  AppointmentConflictException,
+  DoctorNotFoundException,
+  ExamNotFoundException,
+  InvalidAppointmentTimeException,
+  PastAppointmentException,
+} from '../common/exceptions/domain.exception';
 import { Appointment } from '../database/schema/appointments.schema';
 import { DoctorsRepository } from '../doctors/doctors.repository';
 import { ExamsRepository } from '../exams/exams.repository';
@@ -35,7 +37,7 @@ export class AppointmentsService {
   ): Promise<DoctorAvailability[]> {
     const exam = await this.examsRepository.findById(examId);
     if (!exam) {
-      throw new NotFoundException(`Exam with id ${examId} was not found`);
+      throw new ExamNotFoundException(examId);
     }
 
     const doctors = await this.doctorsRepository.findAllWithShifts();
@@ -79,16 +81,14 @@ export class AppointmentsService {
   async create(dto: CreateAppointmentDto): Promise<Appointment> {
     const exam = await this.examsRepository.findById(dto.examId);
     if (!exam) {
-      throw new NotFoundException(`Exam with id ${dto.examId} was not found`);
+      throw new ExamNotFoundException(dto.examId);
     }
 
     const doctor = await this.doctorsRepository.findByIdWithShifts(
       dto.doctorId,
     );
     if (!doctor) {
-      throw new NotFoundException(
-        `Doctor with id ${dto.doctorId} was not found`,
-      );
+      throw new DoctorNotFoundException(dto.doctorId);
     }
 
     const dayOfWeek = getDayOfWeek(dto.date);
@@ -99,18 +99,14 @@ export class AppointmentsService {
     );
 
     if (!shiftSlots.includes(dto.startTime)) {
-      throw new BadRequestException(
-        'The selected time is not within a valid shift for this doctor',
-      );
+      throw new InvalidAppointmentTimeException();
     }
 
     const startAt = buildDateTime(dto.date, dto.startTime);
     const endAt = addMinutes(startAt, exam.durationMinutes);
 
     if (startAt < new Date()) {
-      throw new BadRequestException(
-        'Cannot schedule an appointment in the past',
-      );
+      throw new PastAppointmentException();
     }
 
     const overlapping = await this.appointmentsRepository.findInRangeByDoctorId(
@@ -120,9 +116,7 @@ export class AppointmentsService {
     );
 
     if (overlapping.length > 0) {
-      throw new ConflictException(
-        'The selected time conflicts with an existing appointment',
-      );
+      throw new AppointmentConflictException();
     }
 
     try {
@@ -135,9 +129,7 @@ export class AppointmentsService {
       });
     } catch (error: unknown) {
       if (this.isExclusionViolation(error)) {
-        throw new ConflictException(
-          'The selected time conflicts with an existing appointment',
-        );
+        throw new AppointmentConflictException();
       }
       throw error;
     }

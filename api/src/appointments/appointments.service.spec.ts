@@ -1,9 +1,11 @@
-import {
-  BadRequestException,
-  ConflictException,
-  NotFoundException,
-} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import {
+  AppointmentConflictException,
+  DoctorNotFoundException,
+  ExamNotFoundException,
+  InvalidAppointmentTimeException,
+  PastAppointmentException,
+} from '../common/exceptions/domain.exception';
 import { Appointment } from '../database/schema/appointments.schema';
 import { Exam } from '../database/schema/exams.schema';
 import { DoctorWithShifts } from '../doctors/doctor.types';
@@ -114,11 +116,11 @@ describe('AppointmentsService', () => {
   });
 
   describe('getAvailability', () => {
-    it('throws NotFoundException when the exam does not exist', async () => {
+    it('throws ExamNotFoundException when the exam does not exist', async () => {
       findExamById.mockResolvedValue(undefined);
 
       await expect(service.getAvailability(999, date)).rejects.toThrow(
-        NotFoundException,
+        ExamNotFoundException,
       );
     });
 
@@ -299,7 +301,7 @@ describe('AppointmentsService', () => {
       });
     });
 
-    it('throws NotFoundException when the exam does not exist', async () => {
+    it('throws ExamNotFoundException when the exam does not exist', async () => {
       findExamById.mockResolvedValue(undefined);
 
       await expect(
@@ -310,10 +312,10 @@ describe('AppointmentsService', () => {
           date,
           startTime: '08:00',
         }),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(ExamNotFoundException);
     });
 
-    it('throws NotFoundException when the doctor does not exist', async () => {
+    it('throws DoctorNotFoundException when the doctor does not exist', async () => {
       findExamById.mockResolvedValue(exam40);
       findDoctorById.mockResolvedValue(undefined);
 
@@ -325,10 +327,10 @@ describe('AppointmentsService', () => {
           date,
           startTime: '08:00',
         }),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(DoctorNotFoundException);
     });
 
-    it('throws BadRequestException when the time is outside a valid shift', async () => {
+    it('throws InvalidAppointmentTimeException when the time is outside a valid shift', async () => {
       findExamById.mockResolvedValue(exam40);
       findDoctorById.mockResolvedValue(doctorWithMorningShift);
 
@@ -340,10 +342,10 @@ describe('AppointmentsService', () => {
           date,
           startTime: '12:00',
         }),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow(InvalidAppointmentTimeException);
     });
 
-    it('throws BadRequestException when the time is misaligned with exam duration', async () => {
+    it('throws InvalidAppointmentTimeException when the time is misaligned with exam duration', async () => {
       findExamById.mockResolvedValue(exam40);
       findDoctorById.mockResolvedValue(doctorWithMorningShift);
 
@@ -355,10 +357,10 @@ describe('AppointmentsService', () => {
           date,
           startTime: '08:20',
         }),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow(InvalidAppointmentTimeException);
     });
 
-    it('throws BadRequestException when scheduling in the past', async () => {
+    it('throws PastAppointmentException when scheduling in the past', async () => {
       jest.setSystemTime(new Date(`${date}T10:00:00`));
 
       findExamById.mockResolvedValue(exam40);
@@ -372,10 +374,10 @@ describe('AppointmentsService', () => {
           date,
           startTime: '08:00',
         }),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow(PastAppointmentException);
     });
 
-    it('throws ConflictException when a conflicting appointment exists', async () => {
+    it('throws AppointmentConflictException when a conflicting appointment exists', async () => {
       findExamById.mockResolvedValue(exam40);
       findDoctorById.mockResolvedValue(doctorWithMorningShift);
       findInRangeByDoctorId.mockResolvedValue([
@@ -398,10 +400,10 @@ describe('AppointmentsService', () => {
           date,
           startTime: '08:40',
         }),
-      ).rejects.toThrow(ConflictException);
+      ).rejects.toThrow(AppointmentConflictException);
     });
 
-    it('throws ConflictException when the database reports an exclusion violation', async () => {
+    it('throws AppointmentConflictException when the database reports an exclusion violation', async () => {
       findExamById.mockResolvedValue(exam40);
       findDoctorById.mockResolvedValue(doctorWithMorningShift);
       createAppointment.mockRejectedValue({ code: '23P01' });
@@ -414,10 +416,10 @@ describe('AppointmentsService', () => {
           date,
           startTime: '08:40',
         }),
-      ).rejects.toThrow(ConflictException);
+      ).rejects.toThrow(AppointmentConflictException);
     });
 
-    it('throws ConflictException when the exclusion violation is nested in cause', async () => {
+    it('throws AppointmentConflictException when the exclusion violation is nested in cause', async () => {
       findExamById.mockResolvedValue(exam40);
       findDoctorById.mockResolvedValue(doctorWithMorningShift);
       createAppointment.mockRejectedValue({ cause: { code: '23P01' } });
@@ -430,7 +432,7 @@ describe('AppointmentsService', () => {
           date,
           startTime: '08:40',
         }),
-      ).rejects.toThrow(ConflictException);
+      ).rejects.toThrow(AppointmentConflictException);
     });
   });
 });
