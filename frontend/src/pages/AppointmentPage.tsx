@@ -81,6 +81,7 @@ export default function AppointmentPage() {
       },
       {
         onSuccess: () => {
+          window.alert("Exame agendado com sucesso.");
           setDraft({});
           setStep(1);
         },
