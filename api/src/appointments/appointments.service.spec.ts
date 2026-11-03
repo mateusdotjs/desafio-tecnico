@@ -11,6 +11,7 @@ import { Exam } from '../database/schema/exams.schema';
 import { DoctorWithShifts } from '../doctors/doctor.types';
 import { DoctorsRepository } from '../doctors/doctors.repository';
 import { ExamsRepository } from '../exams/exams.repository';
+import { AppointmentListItem } from './appointment.types';
 import { AppointmentsRepository } from './appointments.repository';
 import { AppointmentsService } from './appointments.service';
 
@@ -29,6 +30,9 @@ describe('AppointmentsService', () => {
     AppointmentsRepository['findInRangeByDoctorId']
   >;
   let createAppointment: jest.MockedFunction<AppointmentsRepository['create']>;
+  let findAllAppointments: jest.MockedFunction<
+    AppointmentsRepository['findAll']
+  >;
 
   const doctorId = '11111111-1111-1111-1111-111111111111';
   const otherDoctorId = '22222222-2222-2222-2222-222222222222';
@@ -85,6 +89,7 @@ describe('AppointmentsService', () => {
     findInRange = jest.fn().mockResolvedValue([]);
     findInRangeByDoctorId = jest.fn().mockResolvedValue([]);
     createAppointment = jest.fn();
+    findAllAppointments = jest.fn().mockResolvedValue([]);
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -102,6 +107,7 @@ describe('AppointmentsService', () => {
           useValue: {
             findInRange,
             findInRangeByDoctorId,
+            findAll: findAllAppointments,
             create: createAppointment,
           },
         },
@@ -433,6 +439,25 @@ describe('AppointmentsService', () => {
           startTime: '08:40',
         }),
       ).rejects.toThrow(AppointmentConflictException);
+    });
+  });
+
+  describe('findAll', () => {
+    it('returns the appointments from the repository', async () => {
+      const list: AppointmentListItem[] = [
+        {
+          id: '33333333-3333-3333-3333-333333333333',
+          patientName: 'Maria',
+          examName: exam40.name,
+          doctorName: 'Dra. Helena Marques',
+          startAt: new Date(`${date}T08:00:00`),
+          endAt: new Date(`${date}T08:40:00`),
+        },
+      ];
+      findAllAppointments.mockResolvedValue(list);
+
+      await expect(service.findAll()).resolves.toEqual(list);
+      expect(findAllAppointments).toHaveBeenCalledWith();
     });
   });
 });

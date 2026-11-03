@@ -1,11 +1,14 @@
 import { InjectDrizzle } from '@nestjs/drizzle';
 import { Injectable } from '@nestjs/common';
-import { and, eq, gt, lt } from 'drizzle-orm';
+import { and, desc, eq, gt, lt } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import {
   appointments,
   Appointment,
 } from '../database/schema/appointments.schema';
+import { doctors } from '../database/schema/doctors.schema';
+import { exams } from '../database/schema/exams.schema';
+import { AppointmentListItem } from './appointment.types';
 
 export type NewAppointment = {
   patientName: string;
@@ -41,6 +44,22 @@ export class AppointmentsRepository {
           eq(appointments.doctorId, doctorId),
         ),
       );
+  }
+
+  async findAll(): Promise<AppointmentListItem[]> {
+    return this.db
+      .select({
+        id: appointments.id,
+        patientName: appointments.patientName,
+        examName: exams.name,
+        doctorName: doctors.name,
+        startAt: appointments.startAt,
+        endAt: appointments.endAt,
+      })
+      .from(appointments)
+      .innerJoin(exams, eq(appointments.examId, exams.id))
+      .innerJoin(doctors, eq(appointments.doctorId, doctors.id))
+      .orderBy(desc(appointments.createdAt));
   }
 
   async create(values: NewAppointment): Promise<Appointment> {

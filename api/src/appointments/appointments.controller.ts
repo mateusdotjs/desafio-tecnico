@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { Appointment } from '../database/schema/appointments.schema';
-import { DoctorAvailability } from './appointment.types';
+import { AppointmentListItem, DoctorAvailability } from './appointment.types';
 import { AppointmentsService } from './appointments.service';
 import { AvailabilityQueryDto } from './dto/availability-query.dto';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
@@ -14,6 +14,11 @@ export class AppointmentsController {
     @Query() query: AvailabilityQueryDto,
   ): Promise<DoctorAvailability[]> {
     return this.appointmentsService.getAvailability(query.examId, query.date);
+  }
+
+  @Get()
+  findAll(): Promise<AppointmentListItem[]> {
+    return this.appointmentsService.findAll();
   }
 
   @Post()

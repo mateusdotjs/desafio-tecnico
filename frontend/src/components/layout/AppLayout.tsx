@@ -12,18 +12,18 @@ export default function AppLayout() {
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
           <Link
-            to="/"
+            to="/agendar"
             className="text-lg font-bold text-sky-600 hover:text-sky-700"
           >
             Agendamento de Exames
           </Link>
           <div className="flex items-center gap-6">
             <nav className="flex items-center gap-4 text-sm">
-              <NavLink to="/" end className={navLinkClassName}>
-                Início
-              </NavLink>
               <NavLink to="/agendar" className={navLinkClassName}>
                 Agendar
+              </NavLink>
+              <NavLink to="/debug" className={navLinkClassName}>
+                Debug
               </NavLink>
             </nav>
             <div className="flex shrink-0 items-center gap-2" />

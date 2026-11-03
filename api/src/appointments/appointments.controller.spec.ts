@@ -10,6 +10,7 @@ describe('AppointmentsController', () => {
     AppointmentsService['getAvailability']
   >;
   let create: jest.MockedFunction<AppointmentsService['create']>;
+  let findAll: jest.MockedFunction<AppointmentsService['findAll']>;
 
   const availability: DoctorAvailability[] = [
     {
@@ -32,13 +33,14 @@ describe('AppointmentsController', () => {
   beforeEach(async () => {
     getAvailability = jest.fn().mockResolvedValue(availability);
     create = jest.fn().mockResolvedValue(appointment);
+    findAll = jest.fn().mockResolvedValue([]);
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AppointmentsController],
       providers: [
         {
           provide: AppointmentsService,
-          useValue: { getAvailability, create },
+          useValue: { getAvailability, create, findAll },
         },
       ],
     }).compile();
@@ -65,5 +67,22 @@ describe('AppointmentsController', () => {
 
     await expect(controller.create(dto)).resolves.toEqual(appointment);
     expect(create).toHaveBeenCalledWith(dto);
+  });
+
+  it('delegates the appointment list to the service', async () => {
+    const list = [
+      {
+        id: appointment.id,
+        patientName: appointment.patientName,
+        examName: 'Ultrassonografia Abdominal Total',
+        doctorName: 'Dra. Helena Marques',
+        startAt: appointment.startAt,
+        endAt: appointment.endAt,
+      },
+    ];
+    findAll.mockResolvedValue(list);
+
+    await expect(controller.findAll()).resolves.toEqual(list);
+    expect(findAll).toHaveBeenCalledWith();
   });
 });

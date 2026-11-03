@@ -1,6 +1,7 @@
 import { request } from "../client.ts";
 import type {
   Appointment,
+  AppointmentListItem,
   CreateAppointmentInput,
   DoctorAvailability,
 } from "../types.ts";
@@ -15,6 +16,10 @@ export function getAvailability(
   });
 
   return request<DoctorAvailability[]>(`/appointments/availability?${params}`);
+}
+
+export function getAppointments(): Promise<AppointmentListItem[]> {
+  return request<AppointmentListItem[]>("/appointments");
 }
 
 export function createAppointment(

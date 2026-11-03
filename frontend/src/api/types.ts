@@ -27,3 +27,12 @@ export type Appointment = {
   endAt: string;
   createdAt: string;
 };
+
+export type AppointmentListItem = {
+  id: string;
+  patientName: string;
+  examName: string;
+  doctorName: string;
+  startAt: string;
+  endAt: string;
+};

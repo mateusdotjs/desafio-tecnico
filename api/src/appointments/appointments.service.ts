@@ -17,7 +17,7 @@ import {
   getDayOfWeek,
   overlapsAny,
 } from '../helpers/time';
-import { DoctorAvailability } from './appointment.types';
+import { AppointmentListItem, DoctorAvailability } from './appointment.types';
 import { AppointmentsRepository } from './appointments.repository';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 
@@ -30,6 +30,10 @@ export class AppointmentsService {
     private readonly doctorsRepository: DoctorsRepository,
     private readonly appointmentsRepository: AppointmentsRepository,
   ) {}
+
+  findAll(): Promise<AppointmentListItem[]> {
+    return this.appointmentsRepository.findAll();
+  }
 
   async getAvailability(
     examId: number,
