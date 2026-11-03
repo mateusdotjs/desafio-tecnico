@@ -1,9 +1,19 @@
+import { BrowserRouter, Route, Routes } from "react-router";
+import AppLayout from "./components/layout/AppLayout.tsx";
+import AppointmentPage from "./pages/AppointmentPage.tsx";
+import HomePage from "./pages/HomePage.tsx";
+
 function App() {
   return (
-    <h1 className="p-8 text-center text-3xl font-bold text-sky-600">
-      Hello, Tailwind
-    </h1>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/agendar" element={<AppointmentPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
