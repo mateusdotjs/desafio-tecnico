@@ -15,6 +15,11 @@ export default function AppointmentPage() {
 
   const step1Complete = draft.examId != null;
   const step2Complete = isAppointmentDateSelected(draft.date);
+  const step3Complete =
+    draft.doctorId != null &&
+    draft.doctorId.length > 0 &&
+    draft.startTime != null &&
+    draft.startTime.length > 0;
 
   function goBack() {
     setStep((step) => Math.max(1, step - 1));
@@ -47,7 +52,16 @@ export default function AppointmentPage() {
           <ExamStep
             examId={draft.examId}
             onExamIdChange={(examId) =>
-              setDraft((current) => ({ ...current, examId }))
+              setDraft((current) =>
+                current.examId === examId
+                  ? current
+                  : {
+                      ...current,
+                      examId,
+                      doctorId: undefined,
+                      startTime: undefined,
+                    },
+              )
             }
           />
         )}
@@ -55,11 +69,33 @@ export default function AppointmentPage() {
           <DateStep
             date={draft.date}
             onDateChange={(date) =>
-              setDraft((current) => ({ ...current, date }))
+              setDraft((current) =>
+                current.date === date
+                  ? current
+                  : {
+                      ...current,
+                      date,
+                      doctorId: undefined,
+                      startTime: undefined,
+                    },
+              )
             }
           />
         )}
-        {step === 3 && <DoctorAndTimeStep />}
+        {step === 3 && (
+          <DoctorAndTimeStep
+            examId={draft.examId}
+            date={draft.date}
+            doctorId={draft.doctorId}
+            startTime={draft.startTime}
+            onDoctorIdChange={(doctorId) =>
+              setDraft((current) => ({ ...current, doctorId }))
+            }
+            onStartTimeChange={(startTime) =>
+              setDraft((current) => ({ ...current, startTime }))
+            }
+          />
+        )}
       </section>
 
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -86,7 +122,8 @@ export default function AppointmentPage() {
           <button
             type="button"
             onClick={handleAgendar}
-            className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700"
+            disabled={!step3Complete}
+            className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-40"
           >
             Agendar
           </button>
