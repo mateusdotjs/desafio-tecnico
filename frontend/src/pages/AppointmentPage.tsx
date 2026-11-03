@@ -4,6 +4,7 @@ import DateStep from "../components/appointment/DateStep.tsx";
 import DoctorAndTimeStep from "../components/appointment/DoctorAndTimeStep.tsx";
 import ExamStep from "../components/appointment/ExamStep.tsx";
 import type { AppointmentDraft } from "../types/appointment.ts";
+import { isAppointmentDateSelected } from "../utils/date.ts";
 
 const STEP_LABELS = ["Exame", "Data", "Médico e horário"] as const;
 const TOTAL_STEPS = STEP_LABELS.length;
@@ -13,6 +14,7 @@ export default function AppointmentPage() {
   const [draft, setDraft] = useState<AppointmentDraft>({});
 
   const step1Complete = draft.examId != null;
+  const step2Complete = isAppointmentDateSelected(draft.date);
 
   function goBack() {
     setStep((step) => Math.max(1, step - 1));
@@ -20,6 +22,10 @@ export default function AppointmentPage() {
 
   function goNext() {
     if (step === 1 && !step1Complete) {
+      return;
+    }
+
+    if (step === 2 && !step2Complete) {
       return;
     }
 
@@ -45,7 +51,14 @@ export default function AppointmentPage() {
             }
           />
         )}
-        {step === 2 && <DateStep />}
+        {step === 2 && (
+          <DateStep
+            date={draft.date}
+            onDateChange={(date) =>
+              setDraft((current) => ({ ...current, date }))
+            }
+          />
+        )}
         {step === 3 && <DoctorAndTimeStep />}
       </section>
 
@@ -62,7 +75,9 @@ export default function AppointmentPage() {
           <button
             type="button"
             onClick={goNext}
-            disabled={step === 1 && !step1Complete}
+            disabled={
+              (step === 1 && !step1Complete) || (step === 2 && !step2Complete)
+            }
             className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-40"
           >
             Próximo

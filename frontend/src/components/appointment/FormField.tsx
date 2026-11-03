@@ -7,6 +7,7 @@ type FormFieldProps = {
   label: string;
   htmlFor: string;
   hint?: string;
+  error?: string;
   children: ReactNode;
 };
 
@@ -14,6 +15,7 @@ export default function FormField({
   label,
   htmlFor,
   hint,
+  error,
   children,
 }: FormFieldProps) {
   return (
@@ -23,6 +25,7 @@ export default function FormField({
       </label>
       {hint ? <p className="text-xs text-slate-500">{hint}</p> : null}
       {children}
+      {error ? <p className="text-sm text-red-600">{error}</p> : null}
     </div>
   );
 }
