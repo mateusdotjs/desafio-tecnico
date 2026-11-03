@@ -40,7 +40,6 @@ describe('AllExceptionsFilter', () => {
     expect(json).toHaveBeenCalledWith({
       statusCode: HttpStatus.NOT_FOUND,
       message: 'Exame com id 7 não encontrado',
-      error: 'Não encontrado',
     });
   });
 
@@ -51,7 +50,6 @@ describe('AllExceptionsFilter', () => {
     expect(json).toHaveBeenCalledWith({
       statusCode: HttpStatus.NOT_FOUND,
       message: 'Médico com id doctor-id não encontrado',
-      error: 'Não encontrado',
     });
   });
 
@@ -63,7 +61,6 @@ describe('AllExceptionsFilter', () => {
       statusCode: HttpStatus.BAD_REQUEST,
       message:
         'O horário selecionado não está dentro de um turno válido deste médico',
-      error: 'Requisição inválida',
     });
   });
 
@@ -74,7 +71,6 @@ describe('AllExceptionsFilter', () => {
     expect(json).toHaveBeenCalledWith({
       statusCode: HttpStatus.BAD_REQUEST,
       message: 'Não é possível agendar um horário no passado',
-      error: 'Requisição inválida',
     });
   });
 
@@ -85,11 +81,10 @@ describe('AllExceptionsFilter', () => {
     expect(json).toHaveBeenCalledWith({
       statusCode: HttpStatus.CONFLICT,
       message: 'O horário selecionado conflita com um agendamento existente',
-      error: 'Conflito',
     });
   });
 
-  it('forwards validation HttpExceptions', () => {
+  it('maps a validation HttpException to message and errors', () => {
     filter.catch(
       new BadRequestException(['O nome do paciente é obrigatório']),
       host,
@@ -98,8 +93,28 @@ describe('AllExceptionsFilter', () => {
     expect(status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
     expect(json).toHaveBeenCalledWith({
       statusCode: HttpStatus.BAD_REQUEST,
-      message: ['O nome do paciente é obrigatório'],
-      error: 'Bad Request',
+      message: 'Erro de validação',
+      errors: ['O nome do paciente é obrigatório'],
+    });
+  });
+
+  it('keeps each validation failure in errors', () => {
+    filter.catch(
+      new BadRequestException([
+        'O nome do paciente é obrigatório',
+        'A data informada é inválida',
+      ]),
+      host,
+    );
+
+    expect(status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
+    expect(json).toHaveBeenCalledWith({
+      statusCode: HttpStatus.BAD_REQUEST,
+      message: 'Erro de validação',
+      errors: [
+        'O nome do paciente é obrigatório',
+        'A data informada é inválida',
+      ],
     });
   });
 
@@ -112,7 +127,6 @@ describe('AllExceptionsFilter', () => {
     expect(json).toHaveBeenCalledWith({
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
       message: 'Erro interno do servidor',
-      error: 'Erro interno do servidor',
     });
     expect(JSON.stringify(json.mock.calls)).not.toContain('senha do banco');
     expect(errorSpy).toHaveBeenCalledWith(

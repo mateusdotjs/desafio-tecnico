@@ -17,6 +17,7 @@ import {
 } from '../exceptions/domain.exception';
 
 const INTERNAL_SERVER_ERROR_MESSAGE = 'Erro interno do servidor';
+const VALIDATION_ERROR_MESSAGE = 'Erro de validação';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -27,11 +28,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     if (exception instanceof HttpException) {
       const status = exception.getStatus();
-      const body = exception.getResponse();
-      const payload =
-        typeof body === 'string' ? { statusCode: status, message: body } : body;
+      const errors = this.validationErrors(exception);
 
-      response.status(status).json(payload);
+      response.status(status).json({
+        statusCode: status,
+        message: VALIDATION_ERROR_MESSAGE,
+        errors,
+      });
       return;
     }
 
@@ -50,6 +53,34 @@ export class AllExceptionsFilter implements ExceptionFilter {
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
       message: INTERNAL_SERVER_ERROR_MESSAGE,
     });
+  }
+
+  private validationErrors(exception: HttpException): string[] {
+    const body = exception.getResponse();
+
+    if (typeof body === 'string') {
+      return [body];
+    }
+
+    if (typeof body === 'object' && body !== null && 'message' in body) {
+      const message = body.message;
+
+      if (typeof message === 'string') {
+        return [message];
+      }
+
+      if (Array.isArray(message)) {
+        const errors = message.filter(
+          (item): item is string => typeof item === 'string',
+        );
+
+        if (errors.length > 0) {
+          return errors;
+        }
+      }
+    }
+
+    return [exception.message];
   }
 
   private resolveStatus(exception: DomainException): HttpStatus {
