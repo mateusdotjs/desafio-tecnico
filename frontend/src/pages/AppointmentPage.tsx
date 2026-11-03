@@ -3,19 +3,22 @@ import AppointmentStepper from "../components/appointment/AppointmentStepper.tsx
 import DateStep from "../components/appointment/DateStep.tsx";
 import DoctorAndTimeStep from "../components/appointment/DoctorAndTimeStep.tsx";
 import ExamStep from "../components/appointment/ExamStep.tsx";
+import IdentificationStep from "../components/appointment/IdentificationStep.tsx";
 import type { AppointmentDraft } from "../types/appointment.ts";
 import { isAppointmentDateSelected } from "../utils/date.ts";
+import { isPatientNameFilled } from "../utils/patientName.ts";
 
-const STEP_LABELS = ["Exame", "Data", "Médico e horário"] as const;
+const STEP_LABELS = ["Identificação", "Exame", "Data", "Médico e horário"] as const;
 const TOTAL_STEPS = STEP_LABELS.length;
 
 export default function AppointmentPage() {
   const [step, setStep] = useState(1);
   const [draft, setDraft] = useState<AppointmentDraft>({});
 
-  const step1Complete = draft.examId != null;
-  const step2Complete = isAppointmentDateSelected(draft.date);
-  const step3Complete =
+  const step1Complete = isPatientNameFilled(draft.patientName);
+  const step2Complete = draft.examId != null;
+  const step3Complete = isAppointmentDateSelected(draft.date);
+  const step4Complete =
     draft.doctorId != null &&
     draft.doctorId.length > 0 &&
     draft.startTime != null &&
@@ -34,6 +37,10 @@ export default function AppointmentPage() {
       return;
     }
 
+    if (step === 3 && !step3Complete) {
+      return;
+    }
+
     setStep((step) => Math.min(TOTAL_STEPS, step + 1));
   }
 
@@ -49,6 +56,14 @@ export default function AppointmentPage() {
 
       <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         {step === 1 && (
+          <IdentificationStep
+            patientName={draft.patientName}
+            onPatientNameChange={(patientName) =>
+              setDraft((current) => ({ ...current, patientName }))
+            }
+          />
+        )}
+        {step === 2 && (
           <ExamStep
             examId={draft.examId}
             onExamIdChange={(examId) =>
@@ -65,7 +80,7 @@ export default function AppointmentPage() {
             }
           />
         )}
-        {step === 2 && (
+        {step === 3 && (
           <DateStep
             date={draft.date}
             onDateChange={(date) =>
@@ -82,7 +97,7 @@ export default function AppointmentPage() {
             }
           />
         )}
-        {step === 3 && (
+        {step === 4 && (
           <DoctorAndTimeStep
             examId={draft.examId}
             date={draft.date}
@@ -112,7 +127,9 @@ export default function AppointmentPage() {
             type="button"
             onClick={goNext}
             disabled={
-              (step === 1 && !step1Complete) || (step === 2 && !step2Complete)
+              (step === 1 && !step1Complete) ||
+              (step === 2 && !step2Complete) ||
+              (step === 3 && !step3Complete)
             }
             className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-40"
           >
@@ -122,7 +139,7 @@ export default function AppointmentPage() {
           <button
             type="button"
             onClick={handleAgendar}
-            disabled={!step3Complete}
+            disabled={!step4Complete}
             className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-40"
           >
             Agendar
