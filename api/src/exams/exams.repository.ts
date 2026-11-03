@@ -1,6 +1,6 @@
 import { InjectDrizzle } from '@nestjs/drizzle';
 import { Injectable } from '@nestjs/common';
-import { asc, eq, ilike } from 'drizzle-orm';
+import { asc, eq, sql } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { Exam, exams } from '../database/schema/exams.schema';
 
@@ -26,7 +26,7 @@ export class ExamsRepository {
     return this.db
       .select()
       .from(exams)
-      .where(ilike(exams.name, `%${name}%`))
+      .where(sql`unaccent(${exams.name}) ILIKE unaccent(${`%${name}%`})`)
       .orderBy(asc(exams.name));
   }
 }
