@@ -12,6 +12,8 @@ import { ExamsRepository } from '../exams/exams.repository';
 import {
   addMinutes,
   buildDateTime,
+  formatClinicDate,
+  formatClinicTime,
   generateSlotsForShifts,
   getDayBounds,
   getDayOfWeek,
@@ -31,8 +33,18 @@ export class AppointmentsService {
     private readonly appointmentsRepository: AppointmentsRepository,
   ) {}
 
-  findAll(): Promise<AppointmentListItem[]> {
-    return this.appointmentsRepository.findAll();
+  async findAll(): Promise<AppointmentListItem[]> {
+    const rows = await this.appointmentsRepository.findAll();
+
+    return rows.map((row) => ({
+      id: row.id,
+      patientName: row.patientName,
+      examName: row.examName,
+      doctorName: row.doctorName,
+      date: formatClinicDate(row.startAt),
+      startTime: formatClinicTime(row.startAt),
+      endTime: formatClinicTime(row.endAt),
+    }));
   }
 
   async getAvailability(

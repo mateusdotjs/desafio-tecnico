@@ -33,6 +33,7 @@ export type AppointmentListItem = {
   patientName: string;
   examName: string;
   doctorName: string;
-  startAt: string;
-  endAt: string;
+  date: string;
+  startTime: string;
+  endTime: string;
 };

@@ -11,7 +11,7 @@ import { Exam } from '../database/schema/exams.schema';
 import { DoctorWithShifts } from '../doctors/doctor.types';
 import { DoctorsRepository } from '../doctors/doctors.repository';
 import { ExamsRepository } from '../exams/exams.repository';
-import { AppointmentListItem } from './appointment.types';
+import { AppointmentListItem, AppointmentListRow } from './appointment.types';
 import { AppointmentsRepository } from './appointments.repository';
 import { AppointmentsService } from './appointments.service';
 
@@ -443,8 +443,8 @@ describe('AppointmentsService', () => {
   });
 
   describe('findAll', () => {
-    it('returns the appointments from the repository', async () => {
-      const list: AppointmentListItem[] = [
+    it('returns clinic date and time as text', async () => {
+      const rows: AppointmentListRow[] = [
         {
           id: '33333333-3333-3333-3333-333333333333',
           patientName: 'Maria',
@@ -454,7 +454,19 @@ describe('AppointmentsService', () => {
           endAt: new Date(`${date}T08:40:00`),
         },
       ];
-      findAllAppointments.mockResolvedValue(list);
+      findAllAppointments.mockResolvedValue(rows);
+
+      const list: AppointmentListItem[] = [
+        {
+          id: rows[0].id,
+          patientName: 'Maria',
+          examName: exam40.name,
+          doctorName: 'Dra. Helena Marques',
+          date: '2026-11-03',
+          startTime: '08:00',
+          endTime: '08:40',
+        },
+      ];
 
       await expect(service.findAll()).resolves.toEqual(list);
       expect(findAllAppointments).toHaveBeenCalledWith();

@@ -8,7 +8,7 @@ import {
 } from '../database/schema/appointments.schema';
 import { doctors } from '../database/schema/doctors.schema';
 import { exams } from '../database/schema/exams.schema';
-import { AppointmentListItem } from './appointment.types';
+import { AppointmentListRow } from './appointment.types';
 
 export type NewAppointment = {
   patientName: string;
@@ -46,7 +46,7 @@ export class AppointmentsRepository {
       );
   }
 
-  async findAll(): Promise<AppointmentListItem[]> {
+  async findAll(): Promise<AppointmentListRow[]> {
     return this.db
       .select({
         id: appointments.id,

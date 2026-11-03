@@ -34,7 +34,12 @@ export default function DateStep({ date, onDateChange }: DateStepProps) {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-semibold text-slate-900">Escolher data</h2>
+      <div className="space-y-1">
+        <h2 className="text-lg font-semibold text-slate-900">Escolher data</h2>
+        <p className="text-sm text-slate-500">
+          Todas as datas e horários seguem o fuso horário de Brasília.
+        </p>
+      </div>
 
       <FormField
         label="Data do exame"

@@ -76,8 +76,9 @@ describe('AppointmentsController', () => {
         patientName: appointment.patientName,
         examName: 'Ultrassonografia Abdominal Total',
         doctorName: 'Dra. Helena Marques',
-        startAt: appointment.startAt,
-        endAt: appointment.endAt,
+        date: '2026-11-03',
+        startTime: '08:00',
+        endTime: '08:40',
       },
     ];
     findAll.mockResolvedValue(list);
