@@ -1,12 +1,12 @@
-type BookingStepperProps = {
+type AppointmentStepperProps = {
   currentStep: number;
   steps: readonly string[];
 };
 
-export default function BookingStepper({
+export default function AppointmentStepper({
   currentStep,
   steps,
-}: BookingStepperProps) {
+}: AppointmentStepperProps) {
   return (
     <ol className="flex flex-wrap gap-2 sm:gap-4">
       {steps.map((label, index) => {

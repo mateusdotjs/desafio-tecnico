@@ -1,10 +1,15 @@
-export default function ExamStep() {
+import ExamSelectField from "./ExamSelectField.tsx";
+
+type ExamStepProps = {
+  examId: number | undefined;
+  onExamIdChange: (id: number | undefined) => void;
+};
+
+export default function ExamStep({ examId, onExamIdChange }: ExamStepProps) {
   return (
-    <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50 p-8 text-center">
+    <div className="space-y-6">
       <h2 className="text-lg font-semibold text-slate-900">Escolher exame</h2>
-      <p className="mt-2 text-sm text-slate-600">
-        Lista de exames ficará aqui.
-      </p>
+      <ExamSelectField examId={examId} onExamIdChange={onExamIdChange} />
     </div>
   );
 }
