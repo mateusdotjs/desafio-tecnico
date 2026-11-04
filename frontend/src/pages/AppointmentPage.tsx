@@ -5,17 +5,25 @@ import DateStep from "../components/appointment/DateStep.tsx";
 import DoctorAndTimeStep from "../components/appointment/DoctorAndTimeStep.tsx";
 import ExamStep from "../components/appointment/ExamStep.tsx";
 import IdentificationStep from "../components/appointment/IdentificationStep.tsx";
+import ReviewStep from "../components/appointment/ReviewStep.tsx";
 import { useCreateAppointment } from "../hooks/appointment.ts";
 import type { AppointmentDraft } from "../types/appointment.ts";
 import { isAppointmentDateSelected } from "../utils/date.ts";
 import { isPatientNameFilled } from "../utils/patientName.ts";
 
-const STEP_LABELS = ["Identificação", "Exame", "Data", "Médico e horário"] as const;
+const STEP_LABELS = [
+  "Identificação",
+  "Exame",
+  "Data",
+  "Médico e horário",
+  "Conferência",
+] as const;
 const TOTAL_STEPS = STEP_LABELS.length;
 
 export default function AppointmentPage() {
   const [step, setStep] = useState(1);
   const [draft, setDraft] = useState<AppointmentDraft>({});
+  const [appointmentSucceeded, setAppointmentSucceeded] = useState(false);
   const createAppointment = useCreateAppointment();
 
   const step1Complete = isPatientNameFilled(draft.patientName);
@@ -51,6 +59,10 @@ export default function AppointmentPage() {
       return;
     }
 
+    if (step === 4 && !step4Complete) {
+      return;
+    }
+
     setStep((step) => Math.min(TOTAL_STEPS, step + 1));
   }
 
@@ -83,7 +95,7 @@ export default function AppointmentPage() {
       },
       {
         onSuccess: () => {
-          window.alert("Exame agendado com sucesso.");
+          setAppointmentSucceeded(true);
           setDraft({});
           setStep(1);
         },
@@ -107,12 +119,20 @@ export default function AppointmentPage() {
 
       <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         {step === 1 && (
-          <IdentificationStep
-            patientName={draft.patientName}
-            onPatientNameChange={(patientName) =>
-              setDraft((current) => ({ ...current, patientName }))
-            }
-          />
+          <div className="space-y-6">
+            <IdentificationStep
+              patientName={draft.patientName}
+              onPatientNameChange={(patientName) => {
+                setAppointmentSucceeded(false);
+                setDraft((current) => ({ ...current, patientName }));
+              }}
+            />
+            {appointmentSucceeded ? (
+              <p className="text-sm text-green-600">
+                Exame agendado com sucesso.
+              </p>
+            ) : null}
+          </div>
         )}
         {step === 2 && (
           <ExamStep
@@ -164,6 +184,15 @@ export default function AppointmentPage() {
             }}
           />
         )}
+        {step === 5 && (
+          <ReviewStep
+            patientName={draft.patientName}
+            examId={draft.examId}
+            date={draft.date}
+            doctorId={draft.doctorId}
+            startTime={draft.startTime}
+          />
+        )}
       </section>
 
       <div className="space-y-4">
@@ -187,7 +216,8 @@ export default function AppointmentPage() {
               disabled={
                 (step === 1 && !step1Complete) ||
                 (step === 2 && !step2Complete) ||
-                (step === 3 && !step3Complete)
+                (step === 3 && !step3Complete) ||
+                (step === 4 && !step4Complete)
               }
               className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-40"
             >
