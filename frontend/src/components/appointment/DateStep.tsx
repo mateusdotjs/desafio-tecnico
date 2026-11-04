@@ -1,9 +1,5 @@
 import { useState, type FocusEvent, type KeyboardEvent } from "react";
-import {
-  appointmentDateError,
-  maxDateISO,
-  todayISO,
-} from "../../utils/date.ts";
+import { appointmentDateError, todayISO } from "../../utils/date.ts";
 import FormField, { formControlClassName } from "./FormField.tsx";
 
 type DateStepProps = {
@@ -44,14 +40,13 @@ export default function DateStep({ date, onDateChange }: DateStepProps) {
       <FormField
         label="Data do exame"
         htmlFor="appointment-date"
-        hint="De hoje até daqui a um ano."
+        hint="Escolha uma data a partir de hoje."
         error={dateError}
       >
         <input
           id="appointment-date"
           type="date"
           min={todayISO()}
-          max={maxDateISO()}
           value={date ?? ""}
           onChange={(event) => handleChange(event.target.value)}
           onKeyDown={handleKeyDown}

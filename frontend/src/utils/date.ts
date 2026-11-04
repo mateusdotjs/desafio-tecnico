@@ -1,18 +1,21 @@
-function formatISO(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+const saoPauloDateFormatter = new Intl.DateTimeFormat("en-US", {
+  timeZone: "America/Sao_Paulo",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+function getSaoPauloDateParts(): Record<string, string> {
+  return Object.fromEntries(
+    saoPauloDateFormatter
+      .formatToParts(new Date())
+      .map(({ type, value }) => [type, value]),
+  );
 }
 
 export function todayISO(): string {
-  return formatISO(new Date());
-}
-
-export function maxDateISO(): string {
-  const maxDate = new Date();
-  maxDate.setFullYear(maxDate.getFullYear() + 1);
-  return formatISO(maxDate);
+  const dateParts = getSaoPauloDateParts();
+  return `${dateParts.year}-${dateParts.month}-${dateParts.day}`;
 }
 
 export function appointmentDateError(date: string | undefined): string | undefined {
@@ -26,10 +29,6 @@ export function appointmentDateError(date: string | undefined): string | undefin
 
   if (date < todayISO()) {
     return "Escolha uma data de hoje em diante.";
-  }
-
-  if (date > maxDateISO()) {
-    return "A data não pode passar de um ano.";
   }
 
   return undefined;
