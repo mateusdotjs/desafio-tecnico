@@ -60,6 +60,12 @@ Um fuso explícito evita que o comportamento dependa do fuso da máquina ou do c
 
 ## Persistência
 
+### Modelagem dos dados
+
+Os dados fornecidos em `dados/` foram incorporados ao seed. A tabela `exams` mantém o identificador, o nome e a duração definidos em `exames.csv`. Os nomes dos médicos ficam em `doctors`, enquanto os dias e horários de atendimento de `medicos.md` ficam em `shifts`. Os turnos foram separados porque cada médico pode ter vários horários ao longo da semana.
+
+A tabela `appointments` relaciona paciente, exame e médico e armazena o início e o fim do agendamento. O término é calculado com a duração do exame antes da gravação. Os CRMs não foram incluídos porque não participam do fluxo nem das regras solicitadas pelo desafio.
+
 ### PostgreSQL e Drizzle
 
 O PostgreSQL foi escolhido porque o domínio é relacional e exige mais do que armazenamento: chaves estrangeiras mantêm exames, médicos e agendamentos consistentes, enquanto range types, GiST e exclusion constraints permitem garantir a regra de concorrência no banco. Implementar a mesma garantia apenas na aplicação exigiria locks distribuídos ou um nível de isolamento mais caro e complexo.
