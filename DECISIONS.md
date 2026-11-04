@@ -74,7 +74,7 @@ Um mock ou banco em memória não reproduziria extensões, ranges e constraints 
 
 ## Escopo
 
-Devido ao tempo reduzido disponível para o desafio, ficaram como próximos passos:
+Devido ao tempo reduzido que tive disponível para desenvolver o desafio, ficaram como próximos passos:
 
 - Paginar a listagem de agendamentos conforme o volume de dados crescer.
 - Adicionar testes automatizados dos componentes e do fluxo do frontend.
