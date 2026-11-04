@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ApiError } from "../api/exceptionHandler.ts";
+import { ApiError, getErrorMessage } from "../api/exceptionHandler.ts";
 import AppointmentStepper from "../components/appointment/AppointmentStepper.tsx";
 import DateStep from "../components/appointment/DateStep.tsx";
 import DoctorAndTimeStep from "../components/appointment/DoctorAndTimeStep.tsx";
@@ -27,10 +27,12 @@ export default function AppointmentPage() {
     draft.startTime != null &&
     draft.startTime.length > 0;
 
-  const submitError =
-    createAppointment.error instanceof ApiError
-      ? createAppointment.error.message
-      : undefined;
+  const submitError = createAppointment.isError
+    ? getErrorMessage(
+        createAppointment.error,
+        "Não foi possível concluir o agendamento. Tente novamente.",
+      )
+    : undefined;
 
   function goBack() {
     setStep((step) => Math.max(1, step - 1));
@@ -52,7 +54,7 @@ export default function AppointmentPage() {
     setStep((step) => Math.min(TOTAL_STEPS, step + 1));
   }
 
-  function handleAgendar() {
+  function handleSubmitAppointment() {
     const patientName = draft.patientName?.trim();
     const { examId, date, doctorId, startTime } = draft;
 
@@ -194,7 +196,7 @@ export default function AppointmentPage() {
           ) : (
             <button
               type="button"
-              onClick={handleAgendar}
+              onClick={handleSubmitAppointment}
               disabled={!step4Complete || createAppointment.isPending}
               className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-40"
             >

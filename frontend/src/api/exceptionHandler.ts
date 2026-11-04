@@ -28,3 +28,18 @@ export function throwApiError(data: unknown, httpStatus: number): never {
     message: "Erro ao comunicar com o servidor",
   });
 }
+
+export function getErrorMessage(
+  error: unknown,
+  fallback = "Erro ao comunicar com o servidor",
+): string | undefined {
+  if (error == null) {
+    return undefined;
+  }
+
+  if (error instanceof ApiError) {
+    return error.message;
+  }
+
+  return fallback;
+}
