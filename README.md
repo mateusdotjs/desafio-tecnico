@@ -15,6 +15,13 @@ Links rápidos:
 - [Coleção de requisições do Postman](./postman_collection.json)
 - [Exemplos de requisições curl](./curl-requests.sh)
 
+### Fluxo das requisições no Postman
+
+1. Importe a coleção e execute **Listar exames** ou **Buscar exames por nome** para escolher o `examId`.
+2. Ajuste as variáveis `examId` e `date` da coleção e execute **Consultar disponibilidade**.
+3. Copie da resposta o `id` de um médico e um item de `availableSlots` para as variáveis `doctorId` e `startTime`.
+4. Execute **Criar agendamento**. Use **Listar agendamentos** para conferir o resultado.
+
 ## Execução rápida com Docker
 
 ### Pré-requisitos
@@ -105,21 +112,21 @@ Scripts úteis da API:
 
 ### API (`api/.env`)
 
-| Variável | Finalidade | Exemplo |
-| --- | --- | --- |
-| `POSTGRES_USER` | Usuário usado pelo PostgreSQL no Docker | `postgres` |
-| `POSTGRES_PASSWORD` | Senha usada pelo PostgreSQL no Docker | `postgres` |
-| `POSTGRES_DB` | Nome do banco criado no Docker | `exam_scheduler` |
-| `DATABASE_URL` | String de conexão usada pela API, migrations e seed | `postgresql://postgres:postgres@localhost:5432/exam_scheduler` |
-| `TZ` | Fuso local da clínica e do processo da API | `America/Sao_Paulo` |
-| `PORT` | Porta da API; opcional, padrão `3000` | `3000` |
+| Variável            | Finalidade                                          | Exemplo                                                        |
+| ------------------- | --------------------------------------------------- | -------------------------------------------------------------- |
+| `POSTGRES_USER`     | Usuário usado pelo PostgreSQL no Docker             | `postgres`                                                     |
+| `POSTGRES_PASSWORD` | Senha usada pelo PostgreSQL no Docker               | `postgres`                                                     |
+| `POSTGRES_DB`       | Nome do banco criado no Docker                      | `exam_scheduler`                                               |
+| `DATABASE_URL`      | String de conexão usada pela API, migrations e seed | `postgresql://postgres:postgres@localhost:5432/exam_scheduler` |
+| `TZ`                | Fuso local da clínica e do processo da API          | `America/Sao_Paulo`                                            |
+| `PORT`              | Porta da API; opcional, padrão `3000`               | `3000`                                                         |
 
 Ao executar fora do Docker, o host de `DATABASE_URL` é normalmente `localhost`. Dentro da rede do Compose ele é sobrescrito para `postgres`.
 
 ### Frontend (`frontend/.env`)
 
-| Variável | Finalidade | Padrão |
-| --- | --- | --- |
+| Variável            | Finalidade                                  | Padrão                  |
+| ------------------- | ------------------------------------------- | ----------------------- |
 | `VITE_API_BASE_URL` | URL pública da API consumida pelo navegador | `http://localhost:3000` |
 
 Variáveis Vite são incorporadas durante o build; altere-as antes de gerar a imagem ou executar `npm run build`.
@@ -150,12 +157,12 @@ O frontend ainda não possui suíte automatizada; `npm run lint` e `npm run buil
 
 Base local: `http://localhost:3000`.
 
-| Método | Rota | Descrição |
-| --- | --- | --- |
-| `GET` | `/exams` | Lista exames; aceita `name` para busca parcial sem diferenciar acentos ou maiúsculas |
-| `GET` | `/appointments/availability?examId=1&date=2026-11-10` | Retorna médicos e slots livres para o exame e a data |
-| `GET` | `/appointments` | Lista agendamentos; usada pela tela `/debug` |
-| `POST` | `/appointments` | Cria um agendamento |
+| Método | Rota                                                  | Descrição                                                                            |
+| ------ | ----------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `GET`  | `/exams`                                              | Lista exames; aceita `name` para busca parcial sem diferenciar acentos ou maiúsculas |
+| `GET`  | `/appointments/availability?examId=1&date=2026-11-10` | Retorna médicos e slots livres para o exame e a data                                 |
+| `GET`  | `/appointments`                                       | Lista agendamentos; usada pela tela `/debug`                                         |
+| `POST` | `/appointments`                                       | Cria um agendamento                                                                  |
 
 Corpo de `POST /appointments`:
 

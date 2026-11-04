@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a6caf43c-3610-4cbc-a20a-236ea72df918",
     "name": "Agendamento de exames",
-    "description": "Requisições da API do desafio técnico. Execute \"Consultar disponibilidade\" antes de \"Criar agendamento\": o teste da consulta seleciona automaticamente o primeiro médico e horário disponíveis.",
+    "description": "Requisições da API do desafio técnico. Consulte a disponibilidade e copie um médico e horário retornados para as variáveis doctorId e startTime antes de criar um agendamento.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -48,12 +48,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/exams",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "exams"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["exams"]
             },
             "description": "Lista todos os exames cadastrados."
           },
@@ -66,12 +62,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/exams?name=torax",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "exams"
-              ],
+              "host": ["{{baseUrl}}"],
+              "path": ["exams"],
               "query": [
                 {
                   "key": "name",
@@ -91,43 +83,13 @@
       "item": [
         {
           "name": "Consultar disponibilidade",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Consulta realizada com sucesso', function () {",
-                  "  pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "const doctors = pm.response.json();",
-                  "const doctor = doctors.find((item) => item.availableSlots.length > 0);",
-                  "",
-                  "pm.test('Existe ao menos um horário disponível', function () {",
-                  "  pm.expect(doctor).to.not.equal(undefined);",
-                  "});",
-                  "",
-                  "if (doctor) {",
-                  "  pm.collectionVariables.set('doctorId', doctor.id);",
-                  "  pm.collectionVariables.set('startTime', doctor.availableSlots[0]);",
-                  "}"
-                ]
-              }
-            }
-          ],
           "request": {
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/appointments/availability?examId={{examId}}&date={{date}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "appointments",
-                "availability"
-              ],
+              "host": ["{{baseUrl}}"],
+              "path": ["appointments", "availability"],
               "query": [
                 {
                   "key": "examId",
@@ -139,7 +101,7 @@
                 }
               ]
             },
-            "description": "Retorna médicos e horários disponíveis. Ao receber uma resposta válida, salva automaticamente doctorId e startTime para a criação do agendamento."
+            "description": "Retorna médicos e horários disponíveis. Copie um id de médico e um item de availableSlots para as variáveis doctorId e startTime da coleção."
           },
           "response": []
         },
@@ -150,12 +112,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/appointments",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "appointments"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["appointments"]
             },
             "description": "Lista os agendamentos existentes."
           },
@@ -183,14 +141,10 @@
             },
             "url": {
               "raw": "{{baseUrl}}/appointments",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "appointments"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["appointments"]
             },
-            "description": "Cria um agendamento usando o médico e horário salvos por \"Consultar disponibilidade\"."
+            "description": "Cria um agendamento com os valores configurados nas variáveis da coleção."
           },
           "response": []
         }
