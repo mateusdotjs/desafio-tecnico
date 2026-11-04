@@ -1,3 +1,11 @@
+x-api: &api
+  build: ./api
+  env_file:
+    - ./api/.env
+  environment:
+    PORT: 3000
+    DATABASE_URL: postgresql://postgres:postgres@postgres:5432/exam_scheduler
+
 services:
   postgres:
     image: postgres:18
@@ -8,6 +16,45 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  migrate:
+    <<: *api
+    command: npx drizzle-kit migrate
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  seed:
+    <<: *api
+    command: node -r ts-node/register src/database/seed.ts
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  api:
+    <<: *api
+    container_name: api
+    ports:
+      - "3000:3000"
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: http://localhost:3000
+    container_name: frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
 
 volumes:
   postgres_data:
