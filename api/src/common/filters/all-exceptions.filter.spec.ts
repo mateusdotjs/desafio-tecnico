@@ -3,6 +3,7 @@ import {
   BadRequestException,
   HttpStatus,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import {
   AppointmentConflictException,
@@ -115,6 +116,16 @@ describe('AllExceptionsFilter', () => {
         'O nome do paciente é obrigatório',
         'A data informada é inválida',
       ],
+    });
+  });
+
+  it('keeps a non-validation HttpException message', () => {
+    filter.catch(new NotFoundException('Recurso não encontrado'), host);
+
+    expect(status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
+    expect(json).toHaveBeenCalledWith({
+      statusCode: HttpStatus.NOT_FOUND,
+      message: 'Recurso não encontrado',
     });
   });
 

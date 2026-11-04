@@ -30,10 +30,18 @@ export class AllExceptionsFilter implements ExceptionFilter {
       const status = exception.getStatus();
       const errors = this.validationErrors(exception);
 
+      if (errors) {
+        response.status(status).json({
+          statusCode: status,
+          message: VALIDATION_ERROR_MESSAGE,
+          errors,
+        });
+        return;
+      }
+
       response.status(status).json({
         statusCode: status,
-        message: VALIDATION_ERROR_MESSAGE,
-        errors,
+        message: exception.message,
       });
       return;
     }
@@ -55,32 +63,26 @@ export class AllExceptionsFilter implements ExceptionFilter {
     });
   }
 
-  private validationErrors(exception: HttpException): string[] {
+  private validationErrors(exception: HttpException): string[] | null {
     const body = exception.getResponse();
 
-    if (typeof body === 'string') {
-      return [body];
+    if (typeof body !== 'object' || body === null || !('message' in body)) {
+      return null;
     }
 
-    if (typeof body === 'object' && body !== null && 'message' in body) {
-      const message = body.message;
+    if (!Array.isArray(body.message)) {
+      return null;
+    }
 
-      if (typeof message === 'string') {
-        return [message];
-      }
+    const errors: string[] = [];
 
-      if (Array.isArray(message)) {
-        const errors = message.filter(
-          (item): item is string => typeof item === 'string',
-        );
-
-        if (errors.length > 0) {
-          return errors;
-        }
+    for (const item of body.message) {
+      if (typeof item === 'string') {
+        errors.push(item);
       }
     }
 
-    return [exception.message];
+    return errors.length > 0 ? errors : null;
   }
 
   private resolveStatus(exception: DomainException): HttpStatus {
