@@ -49,6 +49,12 @@ export default function ExamSelectField({
           <p className="px-3 py-4 text-sm text-slate-500">Carregando exames…</p>
         ) : null}
 
+        {isError ? (
+          <p className="px-3 py-4 text-sm text-red-600">
+            Não foi possível carregar os exames.
+          </p>
+        ) : null}
+
         {showEmpty ? (
           <p className="px-3 py-4 text-sm text-slate-500">
             Nenhum exame encontrado para essa busca.
@@ -71,7 +77,9 @@ export default function ExamSelectField({
                         : "border-l-4 border-transparent"
                     }`}
                   >
-                    <span className="font-medium text-slate-900">{exam.name}</span>
+                    <span className="font-medium text-slate-900">
+                      {exam.name}
+                    </span>
                     <span className="shrink-0 text-slate-600">
                       {exam.durationMinutes} min
                     </span>
