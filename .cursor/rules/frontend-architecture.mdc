@@ -1,31 +1,37 @@
 ---
-description: Frontend structure and architecture guidelines.
+description: Architecture and implementation conventions for the React frontend.
+globs: frontend/**/*.{ts,tsx,css,html}
 alwaysApply: false
 ---
 
 # Frontend Architecture
 
-## Technology Stack
-- React
-- TypeScript
+## Stack and organization
 
-## Structure
+- Use React, TypeScript, Vite, React Router, TanStack Query, and Tailwind CSS.
+- Pages in `src/pages` compose routes and own state shared across a complete flow.
+- Feature components in `src/components/<feature>` own focused UI steps; layout components stay in `src/components/layout`.
+- Keep HTTP primitives and contracts in `src/api`, server-state hooks in `src/hooks`, UI/domain types in `src/types`, and pure helpers in `src/utils`.
 
-The frontend must be organized by responsibility, keeping pages, components, API communication, and hooks separated.
+## Data flow
 
-- **Pages:** Responsible for composing the interface of each application route.
-- **Components:** Reusable user interface elements.
-- **API:** Handles communication with the backend, including HTTP requests and response handling.
-- **Hooks:** Encapsulate reusable logic and React-related functionality.
+- Never call `fetch` directly from pages or components; use typed request functions under `src/api/requests`.
+- Wrap server reads and mutations in TanStack Query hooks with stable, hierarchical query keys.
+- Invalidate only affected query prefixes after mutations.
+- Keep transient form/wizard state local unless multiple routes genuinely need it; do not add global state by default.
+- When an upstream selection changes, clear dependent values that may have become invalid.
+- Keep the current small exam catalog cached and filter it locally; revisit server search only if the dataset grows.
 
-## Guidelines
+## Components and UX
 
-- Avoid concentrating all page logic in a single component.
-- Components must have clear responsibilities.
-- Avoid making HTTP requests directly inside components when the logic can be encapsulated in the API layer or hooks.
-- Avoid duplicating logic across pages and components.
-- Maintain consistent TypeScript typing.
+- Keep pages as flow orchestrators and extract cohesive steps or reusable controls before they become difficult to scan.
+- Prefer controlled inputs, explicit derived completion states, and guard validation before navigation or mutation.
+- Show simple inline loading, success, empty, and error states; do not add a notification library for basic feedback.
+- Keep user-facing copy in Portuguese and use “agendamento”, not “booking”.
+- Use semantic HTML, associated labels, keyboard-accessible controls, and visible disabled/focus states.
 
-This rule defines only the general structure. More specific architectural decisions will be documented in separate rules as the project evolves.
-alwaysApply: true
----
+## TypeScript and styling
+
+- Preserve strict typing; use `import type`, explicit API contracts, and `.ts`/`.tsx` import extensions as configured.
+- Avoid `any`, unsafe assertions, duplicated API types, and abstractions without a concrete reuse case.
+- Compose Tailwind utilities directly and extract a shared class or component only when repetition is meaningful.

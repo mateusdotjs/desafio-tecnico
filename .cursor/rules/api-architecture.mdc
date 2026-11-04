@@ -1,29 +1,35 @@
 ---
+description: Architecture and implementation conventions for the NestJS API.
+globs: api/**/*.ts
 alwaysApply: false
 ---
+
 # API Architecture
 
-## Technology Stack
-- Node.js
-- TypeScript
-- NestJS
-- Drizzle ORM
+## Stack and organization
 
-## Structure
+- Use Node.js, TypeScript, NestJS, PostgreSQL, and Drizzle ORM.
+- Organize features by domain under `src/<feature>/`, with module, controller, service, repository, DTOs, and local types only when needed.
+- Keep shared HTTP concerns in `src/common`, persistence schemas in `src/database/schema`, and pure reusable domain helpers in `src/helpers`.
 
-The API must follow a layered architecture, with clear separation of responsibilities.
+## Layer responsibilities
 
-- **Modules:** Organize the code by domain or feature, following NestJS module conventions.
-- **Controllers:** Handle HTTP requests, validate input through DTOs, and return responses.
-- **Services:** Handle business logic and use case orchestration.
+- Controllers handle HTTP input/output and delegate immediately; validate input with DTOs and `class-validator`.
+- Services orchestrate use cases and domain rules without depending on Express or HTTP response objects.
+- Repositories are the only feature layer that queries Drizzle or PostgreSQL.
+- Keep database rows, API response types, and DTOs distinct when their shapes or responsibilities differ.
+- Prefer direct dependency injection and concrete classes; add interfaces or extra layers only for a demonstrated need.
 
-## Guidelines
+## Domain and persistence
 
-- Each feature must be organized within its respective module.
-- Keep responsibilities clearly separated between controllers, services, and repositories.
-- Controllers must not contain business logic or perform direct database queries.
-- Services must not depend on HTTP-specific details.
-- Do not introduce additional abstractions or layers without a concrete need.
-- Use TypeScript consistently and take advantage of Drizzle's type inference.
+- Treat appointments as half-open intervals `[start, end)`.
+- Interpret user-facing dates and times in the clinic timezone (`America/Sao_Paulo`) and persist instants as `timestamptz`.
+- Preserve the PostgreSQL exclusion constraint as the final concurrency guarantee; a service pre-check improves errors but is not sufficient alone.
+- Convert known database/domain failures into `DomainException` subclasses and stable HTTP payloads.
+- Keep SQL-visible behavior explicit; use Drizzle type inference and raw SQL in migrations when PostgreSQL features require it.
 
-This rule defines only the general structure. More specific architectural decisions will be documented in separate rules as the project evolves.
+## Tests
+
+- Colocate unit specs with source files and mock repositories at service boundaries.
+- Use integration tests with real PostgreSQL/Testcontainers for migrations, constraints, concurrency, and database-specific behavior.
+- Add or update tests in the same change as the behavior they protect.

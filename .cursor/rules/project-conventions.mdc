@@ -1,0 +1,28 @@
+---
+description: Project-wide engineering preferences and domain conventions.
+alwaysApply: true
+---
+
+# Project Conventions
+
+## Working style
+
+- Prefer the simplest complete solution that fits the current requirements.
+- Keep changes small, cohesive, and easy to review; avoid unrelated cleanup.
+- Do not add abstractions, libraries, infrastructure, or configurability for hypothetical future needs.
+- Reuse the project's existing patterns before introducing a new pattern.
+- Preserve the modular local workflow: PostgreSQL may run separately while API and frontend run locally, and the full Docker Compose flow must remain supported.
+
+## Domain language
+
+- Use “agendamento” in Portuguese copy and documentation;.
+- Keep code identifiers in clear English and user-facing text in Brazilian Portuguese.
+- Use `date` as `YYYY-MM-DD` and `startTime` as `HH:mm` at API boundaries.
+- Treat `DECISIONS.md` as the source of truth for non-obvious domain and architecture decisions.
+
+## Change quality
+
+- Preserve established API response and error contracts unless the task explicitly changes them.
+- Update tests and documentation when behavior, setup, environment variables, or public endpoints change.
+- Prefer explicit names such as `body`, `response`, and `data` over ambiguous transport variable names.
+- Handle realistic failure paths without building generic frameworks for cases outside the current scope.

@@ -40,10 +40,10 @@ Use the following format:
 
 Examples:
 
-- `feat(appointments): add exam appointment booking`
-- `fix(availability): prevent overlapping time slots`
-- `test(appointments): add appointment service tests`
-- `refactor(doctors): simplify availability queries`
+- `feat(frontend): add exam appointment scheduling`
+- `fix(api): prevent overlapping time slots`
+- `test(api): add appointment service tests`
+- `refactor(api): simplify availability queries`
 
 Commit suggestions are informational only. Never execute `git commit` without explicit user authorization.
 
