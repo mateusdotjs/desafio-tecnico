@@ -148,9 +148,7 @@ Base local: `http://localhost:3000`.
 
 | Método | Rota | Descrição |
 | --- | --- | --- |
-| `GET` | `/` | Verificação simples de disponibilidade da API |
 | `GET` | `/exams` | Lista exames; aceita `name` para busca parcial sem diferenciar acentos ou maiúsculas |
-| `GET` | `/doctors` | Lista médicos e seus turnos |
 | `GET` | `/appointments/availability?examId=1&date=2026-11-10` | Retorna médicos e slots livres para o exame e a data |
 | `GET` | `/appointments` | Lista agendamentos; usada pela tela `/debug` |
 | `POST` | `/appointments` | Cria um agendamento |
@@ -167,4 +165,4 @@ Corpo de `POST /appointments`:
 }
 ```
 
-`date` usa `AAAA-MM-DD` e `startTime`, `HH:mm`, ambos interpretados no fuso da clínica. Os identificadores válidos de médico podem ser obtidos em `/doctors` ou `/appointments/availability`.
+`date` usa `AAAA-MM-DD` e `startTime`, `HH:mm`, ambos interpretados no fuso da clínica. Os identificadores válidos de médico vêm de `/appointments/availability`.
