@@ -2,19 +2,25 @@
 
 Este documento registra as principais decisões e premissas adotadas durante o desenvolvimento.
 
+## Estrutura e stack
+
+O projeto usa um monorepo com `api/` e `frontend/`. Isso mantém as duas partes separadas, mas permite executar e avaliar toda a aplicação a partir de um único repositório.
+
+O NestJS foi escolhido pela organização em módulos, injeção de dependências e validação de entrada. No frontend, o Vite oferece uma configuração simples e rápida para React com TypeScript. O TanStack Query gerencia as requisições e o estado dos dados da API, enquanto o Tailwind CSS permite estilizar a interface sem adicionar uma biblioteca de componentes.
+
 ## Funcionamento da aplicação
+
+A rota `/agendar` contém o fluxo principal da aplicação. Nela, o paciente informa seu nome, escolhe o exame, a data, o médico e um horário disponível antes de confirmar o agendamento.
+
+A rota `/debug` exibe os agendamentos persistidos para facilitar a avaliação do desafio sem consultar diretamente o banco. Ela existe apenas para essa finalidade e não faria parte da interface de uma aplicação real.
+
+## Decisões de desenvolvimento
 
 ### Filtro local dos 30 exames no frontend
 
-O frontend carrega o catálogo completo uma vez e filtra os 30 exames em memória conforme o usuário digita. Para um conjunto pequeno e estático, isso deixa a busca imediata, evita uma requisição a cada alteração do campo e aproveita o cache do TanStack Query.
+O frontend busca o catálogo completo e filtra os 30 exames em memória conforme o usuário digita. Para um conjunto pequeno e estático de informações como o disponibilizado para o desafio, isso deixa a busca imediata e evita uma requisição a cada alteração do campo.
 
 A API ainda oferece `GET /exams?name=...`, preservando a busca no servidor para outros clientes e para uma eventual evolução do catálogo. Se o volume crescer, o frontend pode migrar para essa busca com debounce e paginação.
-
-### Finalidade da rota `/debug`
-
-`/debug` é uma rota do frontend para facilitar a avaliação e a inspeção do desafio. Ela consome `GET /appointments` e exibe os agendamentos persistidos, tornando possível confirmar rapidamente o resultado do fluxo sem consultar diretamente o banco.
-
-Ela não representa uma área administrativa pronta para produção. Nesse cenário, a listagem deveria ser protegida, paginada e limitada conforme o perfil do usuário.
 
 ### Constraint de exclusão para concorrência
 
@@ -25,6 +31,12 @@ A API mantém uma consulta prévia de conflitos porque ela evita uma tentativa d
 A tabela `appointments` possui uma exclusion constraint GiST que combina igualdade de `doctor_id` com sobreposição do intervalo `tstzrange(start_at, end_at, '[)')`. A extensão `btree_gist` permite usar a igualdade do médico no mesmo índice. Dessa forma, a validação ocorre atomicamente durante a escrita: entre inserções concorrentes, uma é aceita e a outra viola a constraint.
 
 A API reconhece o código PostgreSQL `23P01` dessa violação e o converte em um erro de domínio com status HTTP `409 Conflict`. Assim, a proteção não depende do timing das consultas nem de uma única instância do servidor.
+
+### Tratamento de erros
+
+A API valida os dados de entrada e retorna mensagens em português. Erros conhecidos usam status HTTP específicos: `400` para dados ou horários inválidos, `404` para exame ou médico inexistente e `409` para conflito de agenda. Erros inesperados retornam uma mensagem genérica com status `500`, sem expor detalhes internos.
+
+O frontend exibe essas mensagens no fluxo e trata estados de carregamento, falha e ausência de dados.
 
 ### Geração dos slots pela duração do exame
 
@@ -42,7 +54,7 @@ A mesma semântica é usada na regra em memória e no PostgreSQL por meio de `ts
 
 Datas e horários enviados pela interface representam o horário local da clínica. A API executa com `TZ=America/Sao_Paulo`, converte esses valores em instantes e os persiste em colunas `timestamp with time zone`.
 
-Um fuso explícito evita que o comportamento dependa do fuso da máquina ou do container em que a API estiver rodando. A escolha de São Paulo reflete a localização presumida da clínica e mantém a interface em termos locais (`AAAA-MM-DD` e `HH:mm`), enquanto o banco preserva instantes comparáveis. A premissa atual é uma única clínica; uma aplicação multiunidade deveria armazenar o fuso por unidade e fazer a conversão explicitamente.
+Um fuso explícito evita que o comportamento dependa do fuso da máquina ou do container em que a API estiver rodando. A escolha de São Paulo reflete a localização presumida da clínica e mantém a interface em termos locais (`AAAA-MM-DD` e `HH:mm`), enquanto o banco preserva instantes comparáveis.
 
 ## Persistência
 
@@ -62,8 +74,8 @@ Um mock ou banco em memória não reproduziria extensões, ranges e constraints 
 
 ## Escopo
 
-### Ausência de autenticação
+Devido ao tempo reduzido disponível para o desafio, ficaram como próximos passos:
 
-Autenticação e autorização ficaram fora do escopo porque o desafio concentra-se em busca, disponibilidade e concorrência no agendamento. A API e a rota `/debug` são, portanto, abertas no ambiente local.
-
-Adicionar autenticação sem requisitos de identidade ou perfis criaria decisões arbitrárias e desviaria esforço das regras avaliadas. Em produção, seria necessário autenticar pacientes e equipe, restringir a listagem de agendamentos, associar cada agendamento ao usuário e registrar ações sensíveis em trilha de auditoria.
+- Paginar a listagem de agendamentos conforme o volume de dados crescer.
+- Adicionar testes automatizados dos componentes e do fluxo do frontend.
+- Adicionar logs estruturados, métricas e auditoria das operações.

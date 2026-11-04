@@ -15,13 +15,6 @@ Links rápidos:
 - [Coleção de requisições do Postman](./postman_collection.json)
 - [Exemplos de requisições curl](./curl-requests.sh)
 
-### Fluxo das requisições no Postman
-
-1. Importe a coleção e execute **Listar exames** ou **Buscar exames por nome** para escolher o `examId`.
-2. Ajuste as variáveis `examId` e `date` da coleção e execute **Consultar disponibilidade**.
-3. Copie da resposta o `id` de um médico e um item de `availableSlots` para as variáveis `doctorId` e `startTime`.
-4. Execute **Criar agendamento**. Use **Listar agendamentos** para conferir o resultado.
-
 ## Execução rápida com Docker
 
 ### Pré-requisitos
@@ -110,6 +103,8 @@ Scripts úteis da API:
 
 ## Variáveis de ambiente
 
+Na configuração padrão, não é necessário alterar os valores. Basta copiar os arquivos `.env.example` conforme indicado no setup.
+
 ### API (`api/.env`)
 
 | Variável            | Finalidade                                          | Exemplo                                                        |
@@ -122,6 +117,7 @@ Scripts úteis da API:
 | `PORT`              | Porta da API; opcional, padrão `3000`               | `3000`                                                         |
 
 Ao executar fora do Docker, o host de `DATABASE_URL` é normalmente `localhost`. Dentro da rede do Compose ele é sobrescrito para `postgres`.
+No Compose, a API e o mapeamento de portas permanecem fixos em `3000`.
 
 ### Frontend (`frontend/.env`)
 
@@ -129,7 +125,7 @@ Ao executar fora do Docker, o host de `DATABASE_URL` é normalmente `localhost`.
 | ------------------- | ------------------------------------------- | ----------------------- |
 | `VITE_API_BASE_URL` | URL pública da API consumida pelo navegador | `http://localhost:3000` |
 
-Variáveis Vite são incorporadas durante o build; altere-as antes de gerar a imagem ou executar `npm run build`.
+Para usar outra URL na execução local, altere `frontend/.env` antes de executar `npm run dev` ou `npm run build`. No Docker, o valor é definido pelo argumento de build em `docker-compose.yml`.
 
 ## Testes
 
@@ -164,16 +160,9 @@ Base local: `http://localhost:3000`.
 | `GET`  | `/appointments`                                       | Lista agendamentos; usada pela tela `/debug`                                         |
 | `POST` | `/appointments`                                       | Cria um agendamento                                                                  |
 
-Corpo de `POST /appointments`:
+### Fluxo das requisições no Postman
 
-```json
-{
-  "patientName": "Maria Silva",
-  "examId": 1,
-  "doctorId": "00000000-0000-0000-0000-000000000000",
-  "date": "2026-11-10",
-  "startTime": "08:00"
-}
-```
-
-`date` usa `AAAA-MM-DD` e `startTime`, `HH:mm`, ambos interpretados no fuso da clínica. Os identificadores válidos de médico vêm de `/appointments/availability`.
+1. Importe a coleção e execute **Listar exames** ou **Buscar exames por nome** para escolher o `examId`.
+2. Ajuste as variáveis `examId` e `date` da coleção e execute **Consultar disponibilidade**.
+3. Copie da resposta o `id` de um médico e um item de `availableSlots` para as variáveis `doctorId` e `startTime`.
+4. Execute **Criar agendamento**. Use **Listar agendamentos** para conferir o resultado.
