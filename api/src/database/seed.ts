@@ -293,6 +293,12 @@ async function seed() {
   const db = drizzle({ client: pool });
 
   try {
+    const existing = await db.select({ id: exams.id }).from(exams).limit(1);
+    if (existing.length > 0) {
+      console.log('Database already seeded, skipping.');
+      return;
+    }
+
     await db.transaction(async (tx) => {
       console.log('Inserting exams…');
       await tx.insert(exams).values(examRows);
