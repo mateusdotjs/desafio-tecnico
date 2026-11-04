@@ -8,7 +8,14 @@ import { resetDb } from '../../test/reset-db';
 import { AppModule } from '../app.module';
 import { getDayOfWeek } from '../helpers/time';
 
-const date = '2027-06-07';
+function formatDate(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+const futureDate = new Date();
+futureDate.setDate(futureDate.getDate() + 30);
+
+const date = formatDate(futureDate);
 const conflictMessage =
   'O horário selecionado conflita com um agendamento existente';
 
