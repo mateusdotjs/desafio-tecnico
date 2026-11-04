@@ -1,0 +1,200 @@
+{
+  "info": {
+    "_postman_id": "a6caf43c-3610-4cbc-a20a-236ea72df918",
+    "name": "Agendamento de exames",
+    "description": "Requisições da API do desafio técnico. Execute \"Consultar disponibilidade\" antes de \"Criar agendamento\": o teste da consulta seleciona automaticamente o primeiro médico e horário disponíveis.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "examId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "date",
+      "value": "2030-01-08",
+      "type": "string"
+    },
+    {
+      "key": "patientName",
+      "value": "Maria Silva",
+      "type": "string"
+    },
+    {
+      "key": "doctorId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "startTime",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Exames",
+      "item": [
+        {
+          "name": "Listar exames",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/exams",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "exams"
+              ]
+            },
+            "description": "Lista todos os exames cadastrados."
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar exames por nome",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/exams?name=torax",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "exams"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "torax",
+                  "description": "Busca parcial, sem diferenciar acentos ou maiúsculas."
+                }
+              ]
+            },
+            "description": "Busca exames por parte do nome."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Agendamentos",
+      "item": [
+        {
+          "name": "Consultar disponibilidade",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Consulta realizada com sucesso', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const doctors = pm.response.json();",
+                  "const doctor = doctors.find((item) => item.availableSlots.length > 0);",
+                  "",
+                  "pm.test('Existe ao menos um horário disponível', function () {",
+                  "  pm.expect(doctor).to.not.equal(undefined);",
+                  "});",
+                  "",
+                  "if (doctor) {",
+                  "  pm.collectionVariables.set('doctorId', doctor.id);",
+                  "  pm.collectionVariables.set('startTime', doctor.availableSlots[0]);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/appointments/availability?examId={{examId}}&date={{date}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments",
+                "availability"
+              ],
+              "query": [
+                {
+                  "key": "examId",
+                  "value": "{{examId}}"
+                },
+                {
+                  "key": "date",
+                  "value": "{{date}}"
+                }
+              ]
+            },
+            "description": "Retorna médicos e horários disponíveis. Ao receber uma resposta válida, salva automaticamente doctorId e startTime para a criação do agendamento."
+          },
+          "response": []
+        },
+        {
+          "name": "Listar agendamentos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/appointments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments"
+              ]
+            },
+            "description": "Lista os agendamentos existentes."
+          },
+          "response": []
+        },
+        {
+          "name": "Criar agendamento",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientName\": \"{{patientName}}\",\n  \"examId\": {{examId}},\n  \"doctorId\": \"{{doctorId}}\",\n  \"date\": \"{{date}}\",\n  \"startTime\": \"{{startTime}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/appointments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments"
+              ]
+            },
+            "description": "Cria um agendamento usando o médico e horário salvos por \"Consultar disponibilidade\"."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

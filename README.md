@@ -9,7 +9,11 @@ Aplicação full-stack para consultar exames e horários médicos e realizar age
 - **Testes:** Jest, Supertest e Testcontainers
 - **Infraestrutura local:** Docker Compose e Nginx
 
-As decisões de implementação e as premissas adotadas estão em [DECISIONS.md](./DECISIONS.md).
+Links rápidos:
+
+- [Decisões de implementação e premissas](./DECISIONS.md)
+- [Coleção de requisições do Postman](./postman_collection.json)
+- [Exemplos de requisições curl](./curl-requests.sh)
 
 ## Execução rápida com Docker
 
