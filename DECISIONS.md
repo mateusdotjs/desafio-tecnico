@@ -18,6 +18,8 @@ A rota `/debug` exibe os agendamentos persistidos para facilitar a avaliação d
 
 ### Filtro local dos 30 exames no frontend
 
+O enunciado exige a busca de exames por nome, mas não define se ela deve ser realizada pelo frontend ou pelo backend.
+
 O frontend busca o catálogo completo e filtra os 30 exames em memória conforme o usuário digita. Para um conjunto pequeno e estático de informações como o disponibilizado para o desafio, isso deixa a busca imediata e evita uma requisição a cada alteração do campo.
 
 A API ainda oferece `GET /exams?name=...`, preservando a busca no servidor para outros clientes e para uma eventual evolução do catálogo. Se o volume crescer, o frontend pode migrar para essa busca com debounce e paginação.
